@@ -8,6 +8,7 @@ package com.aws.greengrass.cli.commands;
 import com.aws.greengrass.cli.adapter.NucleusAdapterIpc;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import picocli.CommandLine;
 import software.amazon.awssdk.aws.greengrass.model.ComponentDetails;
 
@@ -71,9 +72,13 @@ public class ComponentCommand extends BaseCommand {
     }
 
     private void printComponentDetails(ComponentDetails component) throws JsonProcessingException {
-        System.out.println("Component Name: " + component.getComponentName());
-        System.out.println("Version: " + component.getVersion());
-        System.out.println("State: " + component.getState());
-        System.out.println("Configuration: " + mapper.writeValueAsString(component.getConfiguration()));
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode componentDetails = mapper.createObjectNode();
+        componentDetails.put("ComponentName", component.getComponentName());
+        componentDetails.put("Version", component.getVersion());
+        componentDetails.put("State", String.valueOf(component.getState()));
+        componentDetails.put("Configuration", mapper.writeValueAsString(component.getConfiguration()));
+
+        System.out.println(componentDetails.toString());
     }
 }
